@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">One Lab Project</string>
+    <string name="switch_title">Show the time</string>
 </resources>
