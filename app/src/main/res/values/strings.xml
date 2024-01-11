@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">One Lab Project</string>
     <string name="switch_title">Show the time</string>
+    <string name="button_main">Просто кнопка</string>
     <string name="description_button_main">Go to the second activity</string>
     <string name="description_textView_show_digit">Show digit</string>
 </resources>
