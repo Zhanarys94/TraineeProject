@@ -1,16 +1,16 @@
 package com.example.onelabproject
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
-import com.example.onelabproject.fragments.CityChooserFragment
-import com.example.onelabproject.fragments.TimeFragment
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.onelabproject.databinding.ActivityMainBinding
+import com.example.onelabproject.showCountries.RecyclerAdapterCountry
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private val cityAndTimeViewModel: CityAndTimeViewModel by viewModels()
+    private val countriesViewModel: CountriesViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,33 +18,16 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction()
-                .setReorderingAllowed(true)
-                .add(binding.mainActivityFragmentContainer.id, CityChooserFragment(), "CityChooserFragment")
-                .commit()
-        }
-        binding.switchCityToTime.setOnClickListener {
-            cityAndTimeViewModel.switchCityToTimeSwitcher()
-        }
-        cityAndTimeViewModel.isCityToTimeSwitcherActive.observe(this) { isSwitcherActive ->
-            when (isSwitcherActive) {
-                true -> {
-                    supportFragmentManager.beginTransaction()
-                        .setReorderingAllowed(true)
-                        .replace(binding.mainActivityFragmentContainer.id, TimeFragment(), "TimeFragment")
-                        .addToBackStack("TimeFragment")
-                        .commit()
-                }
-                false -> {
-                    supportFragmentManager.popBackStack("TimeFragment", 1)
-                }
-            }
-        }
+        countriesViewModel.setDefaultCountries()
 
-        binding.buttonMain.setOnClickListener {
-            val intent = Intent(this, ShowDigitActivity::class.java)
-            startActivity(intent)
+        val recyclerViewCountries = binding.mainActivityRecyclerView
+        recyclerViewCountries.layoutManager = LinearLayoutManager(this)
+        recyclerViewCountries.adapter = RecyclerAdapterCountry()
+        recyclerViewCountries.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+
+
+        countriesViewModel.countriesLiveData.observe(this) {
+            (recyclerViewCountries.adapter as RecyclerAdapterCountry).submitList(it)
         }
     }
 }
